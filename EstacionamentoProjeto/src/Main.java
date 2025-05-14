@@ -8,10 +8,15 @@ public class Main {
         veiculo.placa = "ABC";
 
         Sistema sistema = new Sistema();
-        sistema.inicializarVagas();
 
-        sistema.vagas[0].veiculo = veiculo;
-
-        sistema.imprimeVagas();
+        Gestor gestor = new Gestor();
+        gestor.sistema = sistema;
+        gestor.cadastrarVaga(0, Tipo.AUTOMOVEL);
+        gestor.cadastrarVaga(1, Tipo.MOTOCICLETA);
+        gestor.cadastrarVaga(2, Tipo.UTILITARIO);
+        gestor.listarVagas();
+        System.out.println();
+        gestor.excluirVaga(1);
+        gestor.listarVagas();
     }
 }
