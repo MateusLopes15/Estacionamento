@@ -1,5 +1,3 @@
-package Elementos;
-
 import java.time.LocalDateTime;
 
 public class RegistroEstacionamento {
