@@ -5,7 +5,4 @@ public class Veiculo {
     String cor;
     String marca;
     Tipo tipo;
-
-
-
 }
