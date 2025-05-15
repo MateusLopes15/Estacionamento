@@ -1,5 +1,4 @@
 import java.util.InputMismatchException;
-import java.util.Random;
 import java.util.Scanner;
 
 public class Main {
@@ -13,15 +12,7 @@ public class Main {
         init();
 
         while (true) {
-            System.out.println("--------------------------------------------------------");
-            System.out.println("---- SISTEMA DE CONTROLE DO PÁTIO DE ESTACIONAMENTO ----");
-            System.out.println("--------------------------------------------------------");
-            System.out.println();
-
-            System.out.println("Selecione a sua opção: ");
-            System.out.println("1 - Sistema de Atendimento");
-            System.out.println("2 - Sistema de Gestão");
-            System.out.println("3 - Sair");
+            gestor.menuPrincipal();
             int escolha = escolhaUsuario(sc);
             switch (escolha) {
                 case 1:
@@ -56,27 +47,8 @@ public class Main {
         gestor.tarifa = tarifa;
         funcionario.sistema = sistema;
         funcionario.tarifa = tarifa;
-        geraVagas(); // Cadastra 50 vagas através das funções do gestor
+        gestor.initGeraVagas(); // Cadastra 50 vagas através das funções do gestor
 
-    }
-
-    static void geraVagas() {
-        Random r = new Random();
-        for (int i = 0; i < gestor.sistema.vagas.length / 2; i++) {
-            int tipoRandom = r.nextInt(3);
-            Tipo tipo = null;
-            switch (tipoRandom) {
-                case 0:
-                    tipo = Tipo.UTILITARIO;
-                    break;
-                case 1:
-                    tipo = Tipo.AUTOMOVEL;
-                    break;
-                case 2:
-                    tipo = Tipo.MOTOCICLETA;
-            }
-            gestor.cadastrarVaga(i + 1, tipo);
-        }
     }
 
     /*
@@ -87,13 +59,7 @@ public class Main {
 
     static void sistemaGestao(Scanner sc) {
         while (true) {
-            System.out.println("--------------------------------------------------------");
-            System.out.println("----- SISTEMA DE GESTÃO DO PÁTIO DE ESTACIONAMENTO -----");
-            System.out.println("--------------------------------------------------------");
-            System.out.println("1. Gerenciar vagas");
-            System.out.println("2. Gerenciar listagens");
-            System.out.println("3. Alterar tarifas ");
-            System.out.println("4. Retornar ao menu principal");
+            gestor.menuVagas();
             int escolha = escolhaUsuario(sc);
             switch (escolha) {
                 case 1:
@@ -106,6 +72,9 @@ public class Main {
                     sistemaGestaoTarifa(sc);
                     break;
                 case 4:
+                    sistemaGestaoAlterarLarguraColunas(sc);
+                    break;
+                case 5:
                     return;
                 default:
                     System.out.println("Entrada inválida. Tente novamente.");
@@ -121,16 +90,7 @@ public class Main {
 
     static void sistemaGestaoGerenciarVagas(Scanner sc) {
         while (true) {
-            System.out.println("--------------------------------------------------------");
-            System.out.println("---------------- GERENCIAMENTO DE VAGAS ----------------");
-            System.out.println("--------------------------------------------------------");
-            System.out.println("Selecione a sua opção: ");
-            System.out.println("1 - Cadastrar vaga");
-            System.out.println("2 - Excluir vaga");
-            System.out.println("3 - Listar vagas");
-            System.out.println("4 - Alterar dados das vagas");
-            System.out.println("5 - Alterar tamanho das colunas");
-            System.out.println("6 - Retornar ao menu principal");
+            gestor.menuGerenciamentoVagas();
             int escolha = escolhaUsuario(sc);
             switch (escolha) {
                 case 1:
@@ -146,9 +106,6 @@ public class Main {
                     sistemaGestaoAlterarDadosVagas(sc);
                     break;
                 case 5:
-                    sistemaGestaoAlterarLarguraColunas(sc);
-                    break;
-                case 6:
                     return;
                 default:
                     System.out.println("Entrada inválida.");
@@ -157,40 +114,19 @@ public class Main {
     }
 
     static void sistemaGestaoCadastrarVaga(Scanner sc) {
-        int numVaga = -1;
-        while (numVaga < 0) {
-            System.out.println("Digite o número da vaga a ser cadastrada: ");
-            numVaga = escolhaUsuario(sc);
+        System.out.print("Digite o número da vaga a ser cadastrada: ");
+        int numVaga = escolhaUsuario(sc);
+        Tipo tipo = lerTipo(sc);
+        if (gestor.cadastrarVaga(numVaga, tipo)) {
+            System.out.println("Vaga cadastrada com sucesso!");
+        } else {
+            System.out.println("Já existe uma vaga com esse número. Não foi possível realizar o cadastro.");
         }
-        Tipo tipo = null;
-        while (true) {
-            System.out.println("Digite o tipo da vaga (utilitario, automovel, motocicleta): ");
-            String tipoString = sc.nextLine().trim().toLowerCase();
-            switch (tipoString) {
-                case "utilitario":
-                    tipo = Tipo.UTILITARIO;
-                    break;
-                case "automovel":
-                    tipo = Tipo.AUTOMOVEL;
-                    break;
-                case "motocicleta":
-                    tipo = Tipo.MOTOCICLETA;
-                    break;
-                default:
-                    System.out.println("Tipo inválido. Tente novamente");
-            }
-
-            if (gestor.cadastrarVaga(numVaga, tipo)) {
-                System.out.println("Vaga cadastrada com sucesso!");
-            } else {
-                System.out.println("Já existe uma vaga com esse número. Não foi possível realizar o cadastro.");
-            }
-            return;
-        }
+        return;
     }
 
     static void sistemaGestaoExcluirVaga(Scanner sc) {
-        System.out.println("Digite o número da vaga a ser excluída: ");
+        System.out.print("Digite o número da vaga a ser excluída: ");
         int numVaga = escolhaUsuario(sc);
         if (gestor.excluirVaga(numVaga)) {
             System.out.println("Vaga excluída com sucesso!");
@@ -199,68 +135,18 @@ public class Main {
         }
     }
 
-    static void sistemaGestaoAlterarLarguraColunas(Scanner sc) {
-        while (true) {
-            System.out.println("Largura atual das colunas: ");
-            System.out.println("COLUNA 1\tCOLUNA 2\tCOLUNA 3\t COLUNA 4");
-            for (int i = 0; i < gestor.largurasColunaVagas.length; i++) {
-                System.out.print(gestor.largurasColunaVagas[i] + "\t\t");
-            }
-
-            System.out.println("\n\nAlterar a largura de qual coluna?");
-            System.out.println("1 - Coluna 1");
-            System.out.println("2 - Coluna 2");
-            System.out.println("3 - Coluna 3");
-            System.out.println("4 - Coluna 4");
-            System.out.println("5 - Retornar ao menu de gestão");
-
-            int escolha = escolhaUsuario(sc);
-            if (escolha > 0 && escolha < 5) {
-                System.out.println("Digite o novo tamanho da coluna. O tamanho mínimo é 14.");
-                int tamanho = escolhaUsuario(sc);
-
-                if (tamanho < 14) {
-                    System.out.println("Tamanho inválido.");
-                    continue;
-                }
-
-                gestor.largurasColunaVagas[escolha - 1] = tamanho;
-                System.out.println("Largura alterada com sucesso!");
-
-            } else if (escolha == 5) {
-                return;
-            } else {
-                System.out.println("Entrada inválida. Tente novamente.");
-            }
-        }
-    }
-
     static void sistemaGestaoAlterarDadosVagas(Scanner sc) {
         while (true) {
-            System.out.println("--------------------------------------------------------");
-            System.out.println("--------------- ALTERAR DADOS DAS VAGAS ----------------");
-            System.out.println("--------------------------------------------------------");
-            System.out.println("1. Alterar dados de uma vaga");
-            System.out.println("2. Retornar");
+            System.out.print("Digite o número da vaga que você deseja alterar (digite 0 para retornar ao menu): ");
             int escolha = escolhaUsuario(sc);
-
-            switch (escolha) {
-                case 1:
-                    alterarVaga(sc);
-                    break;
-                case 2:
-                    return;
-                default:
-                    System.out.println("Entrada inválida.");
-            }
+            if (escolha == 0) 
+                return;
+            else alterarVaga(escolha, sc);
         }
     }
 
-    static void alterarVaga(Scanner sc) {
-        System.out.print("Digite o número da vaga que você deseja alterar: ");
-        int numeroVaga = escolhaUsuario(sc);
-        Vaga vaga = encontrarVaga(numeroVaga);
-
+    static void alterarVaga(int numVaga, Scanner sc) {
+        Vaga vaga = sistema.encontrarVaga(numVaga);
         if (vaga == null) {
             System.out.println("Não foi possível encontrar uma vaga com o número especificado. Tente novamente.");
             return;
@@ -274,15 +160,21 @@ public class Main {
         int escolha = escolhaUsuario(sc);
         switch (escolha) {
             case 1:
-                alterarNumero(sc, vaga);
+                System.out.print("Digite o novo valor para o número: ");
+                int novoNumero = escolhaUsuario(sc);
+                vaga.alterarNumero(novoNumero);
                 System.out.println("Número alterado com sucesso!");
                 break;
             case 2:
-                alterarTipo(sc, vaga);
+                System.out.print("Digite o novo valor para o tipo (utilitario, automovel, motocicleta): ");
+                Tipo novoTipo = lerTipo(sc);
+                vaga.alterarTipo(novoTipo);
                 System.out.println("Tipo alterado com sucesso!");
                 break;
             case 3:
-                alterarEstado(sc, vaga);
+                System.out.print("Digite o novo valor para o estado (livre, ocupado): ");
+                Estado novoEstado = lerEstado(sc);
+                vaga.alterarEstado(novoEstado);
                 System.out.println("Estado alterado com sucesso!");
                 break;
             default:
@@ -290,58 +182,24 @@ public class Main {
         }
     }
 
-    static void alterarNumero(Scanner sc, Vaga vaga) {
-        System.out.println("Digite o novo número da vaga:");
-        vaga.numero = escolhaUsuario(sc);
-    }
+    /*
+     * 
+     * GESTÃO - ALTERAR TAMANHO DAS COLUNAS NAS LISTAGENS
+     * 
+     */
 
-    static void alterarTipo(Scanner sc, Vaga vaga) {
-        System.out.println("Escolha o novo tipo da vaga:");
-        System.out.println("1 - Utilitário");
-        System.out.println("2 - Automóvel");
-        System.out.println("3 - Motocicleta");
-
-        int tipo = escolhaUsuario(sc);
-        switch (tipo) {
-            case 1:
-                vaga.tipo = Tipo.UTILITARIO;
-                break;
-            case 2:
-                vaga.tipo = Tipo.AUTOMOVEL;
-                break;
-            case 3:
-                vaga.tipo = Tipo.MOTOCICLETA;
-                break;
-            default:
-                System.out.println("Entrada inválida.");
+    static void sistemaGestaoAlterarLarguraColunas(Scanner sc) {
+        while (true) {
+            System.out.println("Largura atual das colunas: " + sistema.getLarguraColuna());
+            System.out.print("Digite o novo valor para a largura das colunas [valor mínimo: 14] (digite 0 para retornar): ");
+            int novoValor = escolhaUsuario(sc);
+            if (novoValor == 0) return;
+            else if (novoValor > 14) gestor.alteraTamanhoColuna(novoValor);
+            else System.out.println("Valor inválido. Tente novamente.");
         }
     }
 
-    static void alterarEstado(Scanner sc, Vaga vaga) {
-        System.out.println("Escolha o novo estado da vaga:");
-        System.out.println("1. Livre");
-        System.out.println("2. Ocupado");
 
-        int estado = escolhaUsuario(sc);
-        if (estado == 1) {
-            vaga.estado = Estado.LIVRE;
-        } else if (estado == 2) {
-            vaga.estado = Estado.OCUPADO;
-        } else {
-            System.out.println("Entrada inválida.");
-        }
-    }
-
-    static Vaga encontrarVaga(int numVaga) {
-        if (numVaga > 0) {
-            for (int i = 0; i < gestor.sistema.numVagas; i++) {
-                if (numVaga == gestor.sistema.vagas[i].numero) {
-                    return gestor.sistema.vagas[i];
-                }
-            }
-        }
-        return null;
-    }
 
     /*
      * 
@@ -351,66 +209,23 @@ public class Main {
 
     static void sistemaGestaoTarifa(Scanner sc) {
         while (true) {
-            System.out.println("--------------------------------------------------------");
-            System.out.println("--------------- GERENCIAMENTO DE TARIFAS ---------------");
-            System.out.println("--------------------------------------------------------");
-
-            System.out.println("UTILITÁRIO:");
-            System.out.printf("Tarifa fixa: R$%.2f\n", gestor.tarifa.tarifaFixa[0]);
-            System.out.printf("Tarifa por hora: R$%.2f\n\n", gestor.tarifa.tarifaHora[0]);
-
-            System.out.println("AUTOMÓVEL:");
-            System.out.printf("Tarifa fixa: R$%.2f\n", gestor.tarifa.tarifaFixa[1]);
-            System.out.printf("Tarifa por hora: R$%.2f\n\n", gestor.tarifa.tarifaHora[1]);
-
-            System.out.println("MOTOCICLETA:");
-            System.out.printf("Tarifa fixa: R$%.2f\n", gestor.tarifa.tarifaFixa[2]);
-            System.out.printf("Tarifa por hora: R$%.2f\n\n", gestor.tarifa.tarifaHora[2]);
-
-            System.out.println("Selecione a sua opção:");
-            System.out.println("1. Alterar tarifas");
-            System.out.println("2. Retornar ao menu");
-
+            tarifa.menu();
             int escolha = escolhaUsuario(sc);
-            if (escolha == 1) {
-                sistemaTarifaAlterarTarifa(sc);
-            } else if (escolha == 2) {
-                return;
-            } else {
-                System.out.println("Entrada inválida.");
+            System.out.print("Digite o novo valor da tarifa: ");
+            double novoValor = entradaDouble(sc);
+            switch (escolha) {
+                case 1:
+                    tarifa.alterarTarifaUtilitario(novoValor);
+                    break;
+                case 2:
+                    tarifa.alterarTarifaAutomovel(novoValor);
+                    break;
+                case 3:
+                    tarifa.alterarTarifaMotocicleta(novoValor);
+                    break;
+                case 4:
+                    return;
             }
-        }
-    }
-
-    static void sistemaTarifaAlterarTarifa(Scanner sc) {
-        System.out.println("Qual tarifa você deseja alterar?");
-        System.out.println("1. Utilitário");
-        System.out.println("2. Automóvel");
-        System.out.println("3. Motocicleta");
-        System.out.println("4. Retornar");
-
-        int escolha = escolhaUsuario(sc);
-        double tarifa = -1;
-
-        if (escolha > 0 && escolha < 4) {
-            System.out.println("Qual a tarifa que você deseja alterar?");
-            System.out.println("1. Tarifa fixa");
-            System.out.println("2. Tarifa por hora");
-            System.out.println("3. Retornar");
-            int tarifaEscolha = escolhaUsuario(sc);
-            if (tarifaEscolha == 1 || tarifaEscolha == 2) {
-                while (tarifa < 0) {
-                    System.out.println("Digite o valor da nova tarifa (em R$): ");
-                    tarifa = sc.nextDouble();
-                }
-            }
-
-            if (tarifaEscolha == 1) {
-                gestor.tarifa.tarifaFixa[escolha - 1] = tarifa;
-            } else if (tarifaEscolha == 2) {
-                gestor.tarifa.tarifaHora[escolha - 1] = tarifa;
-            }
-            System.out.println("Valor alterado com sucesso.");
         }
     }
 
@@ -512,15 +327,57 @@ public class Main {
      */
 
     static int escolhaUsuario(Scanner sc) {
-        int escolha;
-        while (true) {
+        int escolha = -1;
+        while (escolha < 0) {
             try {
                 escolha = sc.nextInt();
                 sc.nextLine(); // Consome o '\n'
-                return escolha;
             } catch (InputMismatchException e) {
                 System.out.println("Entrada inválida. Tente novamente.");
                 sc.nextLine(); // Consome o '\n' em caso de erro
+            }
+        }
+        return escolha;
+    }
+
+    static double entradaDouble(Scanner sc) {
+        double entrada = -1;
+        while (entrada < 0) {
+            try {
+                entrada = sc.nextDouble();
+                sc.nextLine(); // Consome o '\n'
+            } catch (InputMismatchException e) {
+                System.out.println("Entrada inválida. Tente novamente.");
+                sc.nextLine(); // Consome o '\n' em caso de erro
+            }
+        }
+        return entrada;
+    }
+
+    static Tipo lerTipo(Scanner sc) {
+        while (true) {
+            System.out.println("Digite o tipo da vaga: ");
+            Tipo.listarOpcoes();
+            String entrada = sc.nextLine();
+            Tipo tipo = Tipo.stringParaTipo(entrada);
+            if (tipo != null) {
+                return tipo;
+            } else {
+                System.out.println("Tipo inválido. Tente novamente.");
+            }
+        }
+    }
+
+    static Estado lerEstado(Scanner sc) {
+        while (true) {
+            System.out.println("Digite o estado da vaga: ");
+            Estado.listarOpcoes();
+            String entrada = sc.nextLine();
+            Estado estado = Estado.stringParaEstado(entrada);
+            if (estado != null) {
+                return estado;
+            } else {
+                System.out.println("Tipo inválido. Tente novamente.");
             }
         }
     }

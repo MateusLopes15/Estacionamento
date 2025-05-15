@@ -1,9 +1,8 @@
+import java.util.Random;
+
 public class Gestor {
     Sistema sistema;
     Tarifa tarifa;
-    int[] largurasColunaVagas = new int[] { 14, 14, 14, 14 }; // 14 - Tamanho mínimo e default
-    // private int[] largurasColunaRegistro; -> USAR ISSO QUANDO MODELAR A LISTAGEM
-    // DOS REGISTROS DO ESTACIONAMENTO!
 
     public boolean cadastrarVaga(int numVaga, Tipo tipo) {
         for (int i = 0; i < sistema.vagas.length; i++) {
@@ -28,7 +27,7 @@ public class Gestor {
         for (int i = 0; i < sistema.numVagas; i++) {
             if (sistema.vagas[i].numero == numVaga) {
                 for (int j = i; j < sistema.numVagas - 1; j++) {
-                    sistema.vagas[i] = sistema.vagas[i + 1];
+                    sistema.vagas[j] = sistema.vagas[j + 1];
                 }
                 sistema.vagas[sistema.numVagas - 1] = null;
                 sistema.numVagas--;
@@ -39,9 +38,11 @@ public class Gestor {
     }
 
     public void listarVagas() {
+        final int NUM_CAMPOS_VAGAS = 4;
+
         StringBuilder formatacaoBuilder = new StringBuilder();
-        for (int i = 0; i < largurasColunaVagas.length; i++) {
-            formatacaoBuilder.append("%-").append(largurasColunaVagas[i]).append("s");
+        for (int i = 0; i < NUM_CAMPOS_VAGAS; i++) {
+            formatacaoBuilder.append("%-").append(sistema.larguraColuna).append("s");
         }
         String formatacaoColunas = formatacaoBuilder.toString();
 
@@ -60,12 +61,65 @@ public class Gestor {
         }
     }
 
-    public boolean alteraTamanhoColuna(int posicao, int novoTamanho) {
+    public boolean alteraTamanhoColuna(int novoTamanho) {
         if (novoTamanho >= 14) {
-            this.largurasColunaVagas[posicao] = novoTamanho;
+            sistema.larguraColuna = novoTamanho;
             return true;
         } else {
             return false;
         }
+    }
+
+    public void initGeraVagas() { // Gera 50 vagas automaticamente, função destinada a ser utilizada com a função init() do main()
+        Random r = new Random();
+        for (int i = 0; i < sistema.vagas.length / 2; i++) {
+            int tipoRandom = r.nextInt(3);
+            Tipo tipo = null;
+            switch (tipoRandom) {
+                case 0:
+                    tipo = Tipo.UTILITARIO;
+                    break;
+                case 1:
+                    tipo = Tipo.AUTOMOVEL;
+                    break;
+                case 2:
+                    tipo = Tipo.MOTOCICLETA;
+            }
+            cadastrarVaga(i + 1, tipo);
+        }
+    }
+
+    void menuPrincipal() {
+        System.out.println("--------------------------------------------------------");
+        System.out.println("---- SISTEMA DE CONTROLE DO PÁTIO DE ESTACIONAMENTO ----");
+        System.out.println("--------------------------------------------------------");
+        System.out.println();
+        System.out.println("Selecione a sua opção: ");
+        System.out.println("1 - Sistema de Atendimento");
+        System.out.println("2 - Sistema de Gestão");
+        System.out.println("3 - Sair");
+    }
+
+    void menuVagas() {
+        System.out.println("--------------------------------------------------------");
+        System.out.println("----- SISTEMA DE GESTÃO DO PÁTIO DE ESTACIONAMENTO -----");
+        System.out.println("--------------------------------------------------------");
+        System.out.println("1. Gerenciar vagas");
+        System.out.println("2. Gerenciar listagens");
+        System.out.println("3. Alterar tarifas ");
+        System.out.println("4. Alterar tamanho das colunas nas listagens");
+        System.out.println("5. Retornar ao menu principal");
+    }
+
+    void menuGerenciamentoVagas() {
+        System.out.println("--------------------------------------------------------");
+        System.out.println("---------------- GERENCIAMENTO DE VAGAS ----------------");
+        System.out.println("--------------------------------------------------------");
+        System.out.println("Selecione a sua opção: ");
+        System.out.println("1 - Cadastrar vaga");
+        System.out.println("2 - Excluir vaga");
+        System.out.println("3 - Listar vagas");
+        System.out.println("4 - Alterar dados das vagas");
+        System.out.println("5 - Retornar ao menu principal");
     }
 }
