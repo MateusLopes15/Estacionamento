@@ -5,6 +5,7 @@
     - Criação de veículo, caso esse não exista;
     - Registro dos veículos no RegistroEstacionamento;
 - Alteração de tarifa e listagens dos estacionamentos pelo Gestor;
+    - Adicionar o tamanho de colun
 - Métodos das classes em geral.
 
 # FEITO:
