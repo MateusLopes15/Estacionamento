@@ -15,4 +15,9 @@ public class Vaga {
     void alterarEstado(Estado novoEstado) {
         this.estado = novoEstado;
     }
+
+    void listarVaga(String formatacaoColunas, int indice) {
+        System.out.printf(formatacaoColunas, (indice + 1), numero, tipo, estado);
+        System.out.println();
+    }
 }

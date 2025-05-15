@@ -21,14 +21,6 @@ public class Sistema {
         return null;
     }
 
-    public int getLarguraColuna() {
-        return larguraColuna;
-    }
-
-    public void setLarguraColuna(int larguraColuna) {
-        this.larguraColuna = larguraColuna;
-    }
-
     public void listarVeiculos() {
         for (int i = 0; i < veiculos.length; i++) {
             System.out.println("Placa: " + this.veiculos[i].placa);

@@ -54,9 +54,7 @@ public class Gestor {
 
         for (int i = 0; i < sistema.numVagas; i++) {
             if (sistema.vagas[i] != null) {
-                System.out.printf(formatacaoColunas, (i + 1), sistema.vagas[i].numero, sistema.vagas[i].tipo,
-                        sistema.vagas[i].estado);
-                System.out.println();
+                sistema.vagas[i].listarVaga(formatacaoColunas, i);
             }
         }
     }
