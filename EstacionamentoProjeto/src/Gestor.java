@@ -68,7 +68,7 @@ public class Gestor {
         }
     }
 
-    public void initGeraVagas() { // Gera 50 vagas automaticamente, função destinada a ser utilizada com a função init() do main()
+    public void initVagas() { // Gera 50 vagas automaticamente, função destinada a ser utilizada com a função init() do main()
         Random r = new Random();
         for (int i = 0; i < sistema.vagas.length / 2; i++) {
             int tipoRandom = r.nextInt(3);

@@ -22,13 +22,19 @@ public class Sistema {
     }
 
     public void listarVeiculos() {
-        for (int i = 0; i < veiculos.length; i++) {
+        
+        for (int i = 0; i <numVeiculos; i++) {
             System.out.println("Placa: " + this.veiculos[i].placa);
             System.out.println("Modelo: " + this.veiculos[i].modelo);
             System.out.println("Cor: " + this.veiculos[i].cor);
             System.out.println("Marca: " + this.veiculos[i].marca);
             System.out.println("Tipo: " + this.veiculos[i].tipo);
             System.out.println("------------------");
+            System.out.println(numVeiculos);
         }
     }
+
+
+
+
 }

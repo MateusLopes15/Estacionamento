@@ -2,7 +2,7 @@ import java.util.InputMismatchException;
 import java.util.Scanner;
 
 public class Main {
-    static Sistema sistema;
+     static Sistema sistema;
     static Tarifa tarifa;
     static Gestor gestor;
     static Funcionario funcionario;
@@ -47,7 +47,9 @@ public class Main {
         gestor.tarifa = tarifa;
         funcionario.sistema = sistema;
         funcionario.tarifa = tarifa;
-        gestor.initGeraVagas(); // Cadastra 50 vagas através das funções do gestor
+        gestor.initVagas(); // Cadastra 50 vagas através das funções do gestor
+        funcionario.initVeiculos();
+        sistema.listarVeiculos();
 
     }
 
@@ -239,10 +241,10 @@ public class Main {
      * 
      */
 
-    static void sistemaFuncionario(Scanner sc) {
-        funcionario = new Funcionario();
+    static void sistemaFuncionario(Scanner sc){
+       
         while (true) {
-            int escolha = escolhaUsuario(sc);
+            
             System.out.println("--------------------------------------------------------");
             System.out.println("----------SISTEMA DE GESTÃO DO ESTACIONAMENTO-----------");
             System.out.println("--------------------------------------------------------");
@@ -250,79 +252,113 @@ public class Main {
             System.out.println("1 - Cadastrar veículo");
             System.out.println("2 - Adicionar veículo a uma vaga livre");
             System.out.println("3 - Remover veículo de uma vaga");
-
+            int escolha = sc.nextInt();
             switch (escolha) {
                 case 1:
-                    // sistemaCadastroVeiculo(sc);
+                    sistemaCadastroVeiculo(sc);
                     break;
                 case 2:
-                    sistemaAdicionarVeiculoemVaga(sc);
+                   sistemaAdicionarVeiculoemVaga(sc);
                     break;
                 case 3:
-                    // Remover veiculo de uma vaga
+                   System.out.println("dançou");
                     break;
-
+                
                 default:
                     System.out.println("Entrada inválida. Tente novamente.");
             }
         }
+
     }
 
-    // static void sistemaCadastroVeiculo(Scanner sc) {
-    //     Tipo tipo = null;
-    //     Funcionario funcionario;
-    //     funcionario = new Funcionario();
-    //     System.out.println("--------------------------------------------------------");
-    //     System.out.println("-------------SISTEMA DE ADICIONAR VEÍCULO---------------"); // depois de testar fazer uma
-    //                                                                                     // parte para voltar
-    //     System.out.println("--------------------------------------------------------");
-    //     String placaString = "BACBACB";
-    //     while (funcionario.validaPlacaMercosul(placaString) == false) {
-    //         System.out.println("Qual a placa?"); // Já verificar se a placa vale logo no começo para evitar problema de
-    //                                              // ter que digitar tudo novamente
-    //         placaString = sc.nextLine().trim().toUpperCase();
-    //         if (funcionario.validaPlacaMercosul(placaString) == false) {
-    //             System.out.println("Digite uma placa válida");
-    //         } else {
-    //             System.out.println("Placa válida ");
-    //         }
-    //     }
+    static void sistemaCadastroVeiculo(Scanner sc){
+        
+        Tipo tipo= null;
+        Veiculo veiculo;
+        veiculo = new Veiculo();
 
-    //     System.out.println("Qual o modelo?");
-    //     String modeloString = sc.nextLine().toUpperCase();
-    //     System.out.println("Qual a cor?");
-    //     String corString = sc.nextLine().toUpperCase();
-    //     System.out.println("Qual a marca?");
-    //     String marcaString = sc.nextLine().toUpperCase();
-    //     System.out.println("Digite o tipo do veículo (utilitario, automovel, motocicleta): ");
-    //     String tipoString = sc.nextLine().trim().toLowerCase();
-    //     switch (tipoString) {
-    //         case "utilitario":
-    //             tipo = Tipo.UTILITARIO;
-    //             break;
-    //         case "automovel":
-    //             tipo = Tipo.AUTOMOVEL;
-    //             break;
-    //         case "motocicleta":
-    //             tipo = Tipo.MOTOCICLETA;
-    //             break;
-    //         default:
-    //             System.out.println("Tipo inválido. Tente novamente");
-    //     }
-    //     if (funcionario.adicionarVeiculo(placaString, modeloString, corString, marcaString, tipo)) {
-    //         System.out.println("Veículo cadastrada com sucesso!");
-    //     } else {
-    //         System.out.println("Já existe um Veículo existente com essas informações, não foi possível adicionar");
-    //     }
-    //     return;
-
-    // }
-
-    static void sistemaAdicionarVeiculoemVaga(Scanner sc) {
         System.out.println("--------------------------------------------------------");
-        System.out.println("---------SISTEMA DE ADICIONAR VEÍCULO EM VAGA-----------");
+        System.out.println("-------------SISTEMA DE ADICIONAR VEÍCULO---------------");  //depois de testar fazer uma parte para voltar
         System.out.println("--------------------------------------------------------");
+        String placaString = "BACBACB";
+        sc.nextLine();
+        while(veiculo.validaPlacaMercosul(placaString) == false){
+            System.out.println("Qual a placa?");  //Já verificar se a placa vale logo no começo para evitar problema de ter que digitar tudo novamente
+            placaString = sc.nextLine().trim().toUpperCase();
+            if(veiculo.validaPlacaMercosul(placaString) == false){
+                System.out.println("Digite uma placa válida");
+            }else{
+                System.out.println("Placa válida ");
+            }
+        }
+        
+
+        System.out.println("Qual o modelo?");
+        String modeloString = sc.nextLine().toUpperCase();
+        System.out.println("Qual a cor?");
+        String corString = sc.nextLine().toUpperCase();
+        System.out.println("Qual a marca?");
+        String marcaString = sc.nextLine().toUpperCase();
+        System.out.println("Digite o tipo do veículo (utilitario, automovel, motocicleta): ");
+        String tipoString = sc.nextLine().trim().toLowerCase();
+         switch (tipoString) {
+                case "utilitario":
+                    tipo = Tipo.UTILITARIO;
+                    break;
+                case "automovel":
+                    tipo = Tipo.AUTOMOVEL;
+                    break;
+                case "motocicleta":
+                    tipo = Tipo.MOTOCICLETA;
+                    break;
+                default:
+                    System.out.println("Tipo inválido. Tente novamente");
+            }
+                veiculo.placa = placaString;
+                veiculo.modelo = modeloString;
+                veiculo.cor = corString;
+                veiculo.marca = marcaString;
+                veiculo.tipo = tipo;
+
+        if (funcionario.adicionarVeiculo(veiculo)) {
+                System.out.println("Veículo cadastrada com sucesso!");
+                 sistema.listarVeiculos();
+            } else {
+                System.out.println("Já existe um Veículo existente com essas informações, não foi possível adicionar");
+            }
+            return;
+        
     }
+   
+
+    static void sistemaAdicionarVeiculoemVaga(Scanner sc){
+        sc.nextLine();
+        System.out.println("Digite a placa do veículo que deseja adicionar em uma vaga");
+        String placaVeiculo = sc.nextLine();
+        if(funcionario.verificaExistenciaVeiculo(placaVeiculo)){
+            funcionario.adicionarVeiculoVaga(placaVeiculo);
+        }else{
+            System.out.println("Esse veículo não foi adicionado previamente, ou a placa foi digitada errada");
+            System.out.println("Digite  1 para redigitar a placa ou 2 para adicionar veículo ");
+            int choice = sc.nextInt();
+            switch (choice) {
+                case 1:
+                    sistemaAdicionarVeiculoemVaga(sc);
+                    break;
+                case 2:
+                    sistemaCadastroVeiculo(sc);
+                    break;
+                default:
+                System.out.println("Digite um código válido por favor");
+                    break;
+            } 
+        }
+        return;
+    }
+
+    
+
+    
 
     /*
      * 
