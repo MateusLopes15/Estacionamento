@@ -11,3 +11,8 @@
 # FEITO:
 - Esqueleto das classes;
 - Métodos do gestor.
+- Métodos do Funcionário
+
+# OLHAR:
+- Na hora da criação ta permitindo cadastrar veiculos de placas iguais
+- A edição ta por algum motivo não funcionando direito, tem hora que ele edita certinho mas tem hora que edita errado e o campo só fica vazio

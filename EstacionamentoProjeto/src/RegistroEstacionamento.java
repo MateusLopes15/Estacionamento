@@ -5,4 +5,12 @@ public class RegistroEstacionamento {
     LocalDateTime entrada;
     LocalDateTime saida;
     double valorCobrado;
+    
+
+    
+ 
+
+    
+
+    
 }
