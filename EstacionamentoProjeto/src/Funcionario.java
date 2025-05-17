@@ -1,9 +1,7 @@
-import java.nio.channels.Pipe.SourceChannel;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Random;
-import java.util.Scanner;
 
 public class Funcionario {
     Sistema sistema;
@@ -19,7 +17,6 @@ public class Funcionario {
         for (int i = 0; i < 10; i++) {
             LocalDateTime entradaAleatoria = gerarLocalDateTimeAleatorio();
             LocalDateTime saidaAleatoria;
-            Random random = new Random();
             Veiculo veicular = new Veiculo();
             if (sistema.veiculos[i] != null) {
                 veicular = sistema.veiculos[i];
@@ -43,14 +40,13 @@ public class Funcionario {
                 if (veicular.tipo != null) {
                     switch (veicular.tipo) {
                         case UTILITARIO:
-
-                            sistema.registros[i].valorCobrado = 12 + horasDeDuracao * tarifa.tarifaHora[0];
+                            sistema.registros[i].valorCobrado = horasDeDuracao * tarifa.tarifaHora[0];
                             break;
                         case AUTOMOVEL:
-                            sistema.registros[i].valorCobrado = 10 + horasDeDuracao * tarifa.tarifaHora[1];
+                            sistema.registros[i].valorCobrado = horasDeDuracao * tarifa.tarifaHora[1];
                             break;
                         case MOTOCICLETA:
-                            sistema.registros[i].valorCobrado = 8 + horasDeDuracao * tarifa.tarifaHora[2];
+                            sistema.registros[i].valorCobrado = horasDeDuracao * tarifa.tarifaHora[2];
                             break;
 
                     }
@@ -64,7 +60,6 @@ public class Funcionario {
     public static LocalDateTime gerarLocalDateTimeAleatorio() {
         Random random = new Random();
 
-     
         int ano = 2020 + random.nextInt(6);
         int mes = 1 + random.nextInt(12);
         int dia = 1 + random.nextInt(LocalDate.of(ano, mes, 1).lengthOfMonth());
@@ -77,63 +72,76 @@ public class Funcionario {
     }
 
     public void initVeiculos() {
-        String placa = "";
-        String modeloString;
-        String corString;
-        String marcaString;
         Random random = new Random();
 
-        String[] cor = { "CINZA", "VERMELHO", "PRATA", "PRETO", "AZUL" };
-        String[] modelo = { "GOL", "ONIX", "HB20", "RENEGADE", "COMPASS", "COROLLA", "HILUX", "STRADA", "ARGO",
-                "KWID" };
-        String[] marca = { "VOLKSWAGEN", "CHEVROLET", "HYUNDAI", "JEEP", "JEEP", "TOYOTA", "TOYOTA", "FIAT", "FIAT",
-                "RENAULT" };
-        StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < 10; i++) { // Cria veículos para
-            veiculo = new Veiculo();
-            for (int x = 0; x < 3; x++) {
-                int numeroAleatorioo = random.nextInt(26) + 65;
-                sb.append((char) numeroAleatorioo);
-            } // inicializar o programa
-            for (int j = 0; j < 4; j++) {// Cria uma placa válida aleatoria
-                int numeroAleatorio = random.nextInt(10);
-                sb.append(Integer.toString(numeroAleatorio));
-            }
+        String[] cores = { "CINZA", "VERMELHO", "PRATA", "PRETO", "AZUL" };
+        String[] automoveis = { "GOL/VOLKSWAGEN", "ONIX/CHEVROLET", "HB20/HYUNDAI", "COROLLA/TOYOTA",
+                "CIVIC/HONDA",
+                "CRONOS/FIAT", "SANDERO/RENAULT", "VERSA/NISSAN", "FOCUS/FORD", "ARGO/FIAT" };
+        String[] utilitarios = { "HILUX/TOYOTA", "STRADA/FIAT", "DUSTER/RENAULT", "TORO/FIAT", "RANGER/FORD",
+                "S10/CHEVROLET", "FRONTIER/NISSAN", "L200/MITSUBISHI", "AMAROK/VOLKSWAGEN", "TIGUAN/VOLKSWAGEN" };
+        String[] motocicletas = { "CG 160/HONDA", "FAZER 250/YAMAHA", "BIZ 125/HONDA", "XRE 300/HONDA", "MT-03/YAMAHA",
+                "POP 110i/HONDA", "NMAX 160/YAMAHA", "BROZ 160/HONDA", "Z400/KAWASAKI", "DUKE 390/KTM" };
 
-            placa = sb.toString();
-            veiculo.placa = placa;// adiciona placa ao veículo
+        for (int i = 0; i < 10; i++) {
+            Veiculo veiculo = new Veiculo();
 
-            sb.setLength(0); // zera o stringbuilder para que não vire apenas uma placa ENORME
+            String placa = gerarPlacaMercosul(random);
+            veiculo.alteraPlaca(placa);
 
-            Tipo tipo = null;
+            String[] modeloMarca;
+            int r;
             switch (random.nextInt(3)) {
                 case 0:
-                    tipo = Tipo.UTILITARIO;
+                    veiculo.alteraTipo(Tipo.UTILITARIO);
+                    r = random.nextInt(utilitarios.length);
+                    modeloMarca = utilitarios[r].split("/");
                     break;
                 case 1:
-                    tipo = Tipo.AUTOMOVEL;
+                    veiculo.alteraTipo(Tipo.AUTOMOVEL);
+                    r = random.nextInt(automoveis.length);
+                    modeloMarca = automoveis[r].split("/");
                     break;
-                case 2:
-                    tipo = Tipo.MOTOCICLETA;
-                    break;
+                default:
+                    r = random.nextInt(motocicletas.length);
+                    modeloMarca = motocicletas[r].split("/");
+                    veiculo.alteraTipo(Tipo.MOTOCICLETA);
             }
 
-            corString = cor[random.nextInt(cor.length)];
-            modeloString = modelo[random.nextInt(modelo.length)];
-            marcaString = marca[random.nextInt(marca.length)];
-            veiculo.modelo = modeloString;
-            veiculo.cor = corString;
-            veiculo.marca = marcaString;
-            veiculo.tipo = tipo;
+            veiculo.alteraModelo(modeloMarca[0]);
+            veiculo.alteraMarca(modeloMarca[1]);
+            veiculo.cor = cores[random.nextInt(cores.length)];
 
             adicionarVeiculo(veiculo);
+            adicionarVeiculoVaga(placa);
+        }
+    }
 
+    private String gerarPlacaMercosul(Random random) {
+        StringBuilder sb = new StringBuilder();
+
+        // Gera uma placa no formato LLLNLNN, L = Letra, N = Número
+
+        // 3 letras
+        for (int i = 0; i < 3; i++) {
+            sb.append((char) ('A' + random.nextInt(26)));
         }
 
+        // 1 número
+        sb.append(random.nextInt(10));
+
+        // 1 letra
+        sb.append((char) ('A' + random.nextInt(26)));
+
+        // 2 números
+        sb.append(random.nextInt(10));
+        sb.append(random.nextInt(10));
+
+        return sb.toString();
     }
 
     public boolean adicionarVeiculo(Veiculo veiculo) {
-        for(int j=0;j<sistema.numVeiculos;j++){
+        for (int j = 0; j < sistema.numVeiculos; j++) {
             if (sistema.veiculos[j] != null && sistema.veiculos[j].placa == veiculo.placa) {
                 return false;
             }
@@ -151,27 +159,14 @@ public class Funcionario {
             }
         }
         return false;
-
-    }
-
-    public boolean verificaExistenciaVeiculo(String placa) {
-        for (int i = 0; i < sistema.veiculos.length; i++) {
-            if (sistema.veiculos[i] != null && sistema.veiculos[i].placa.equals(placa)) {
-                return true;
-            }
-
-        }
-        return false;
     }
 
     public Veiculo retornarVeiculo(String placa) {
-        Veiculo veicular = new Veiculo();
-        for (int i = 0; i < sistema.veiculos.length; i++) {
+        Veiculo veicular = null;
+        for (int i = 0; i < sistema.numVeiculos; i++) {
             if (sistema.veiculos[i] != null && sistema.veiculos[i].placa.equals(placa)) {
                 veicular = sistema.veiculos[i];
-
             }
-
         }
         return veicular;
     }
@@ -183,15 +178,13 @@ public class Funcionario {
         Veiculo veicular = new Veiculo();
         veicular = retornarVeiculo(placa);
         for (int i = 0; i < sistema.numVagas; i++) {
-            if (veicular.tipo == sistema.vagas[i].tipo && sistema.vagas[i].estado.equals(Estado.LIVRE)) {
-
-                System.out.println("Véiculo da placa: " + veicular.placa + " cadastrado com sucesso");
+            if (veicular.tipo == sistema.vagas[i].tipo && sistema.vagas[i].estado.equals(Estado.LIVRE)
+                    && !verificaVeiculoEstacionado(placa)) {
                 sistema.vagas[i].veiculo = veicular;
                 sistema.vagas[i].estado = Estado.OCUPADO;
                 sistema.numRegistros++;
                 sistema.adicionaVeiculoRegistro(veicular);
                 return true;
-
             }
         }
 
@@ -199,106 +192,12 @@ public class Funcionario {
         return false;
     }
 
-    
-
-    public boolean alterarVeiculo(String placa) {
-        Scanner sc = new Scanner(System.in);
-        Veiculo veicular = new Veiculo();
-        Tipo tipo= null;
-        System.out.println("--------------------------------------------------------");
-        System.out.println("-------------SISTEMA DE EDITAR VEÍCULO------------------");  
-        System.out.println("--------------------------------------------------------");
-        System.out.println("FAÇA TODAS AS ALTERAÇÕES QUE QUISER E DEPOIS ESCOLHA A OPÇÃO DE SAIR");
-        System.out.println("PODE FAZER A ALTERAÇÃO DE DIFERENTES PARTES DO VEÍCULO DE UMA VEZ SÓ");
-        System.out.println("PRESSIONE ENTER PARA CONTINUAR");
-        for (int i = 0; i < sistema.veiculos.length; i++) {
-            if (sistema.veiculos[i] != null && sistema.veiculos[i].placa.equals(placa)) {
-                veicular = sistema.veiculos[i];
-                int adicionar = -1;
-                while (adicionar != 0) {
-                    sc.nextLine();
-                    System.out.println("Deseja modificar:");
-                    System.out.println("1 - PLACA");
-                    System.out.println("2 - MODELO");
-                    System.out.println("3 - MARCA");
-                    System.out.println("4 - COR");
-                    System.out.println("5 - TIPO");
-                    System.out.println("0 - Sair");
-                   
-                    adicionar = sc.nextInt();
-                    switch (adicionar) {
-                        case 1:
-                            
-                            System.out.println("Digite a nova placa");
-                            String stringPlaca = sc.nextLine().toUpperCase();
-                            if (veiculo.validaPlacaMercosul(stringPlaca)) {
-                                veicular.placa = stringPlaca;
-                                sistema.veiculos[i] = veicular;
-                                break;
-                            } else {
-                                System.out.println("Placa não válida");
-                                break;
-                            }
-                        case 2:
-                            
-                            System.out.println("Digite o novo modelo");
-                            String stringModelo = sc.nextLine().toUpperCase();
-                            veicular.modelo = stringModelo;
-                            sistema.veiculos[i] = veicular;
-                            break;
-                        case 3:
-                            
-                            System.out.println("Digite a novoa marca");
-                            String stringMarca = sc.nextLine().toUpperCase();
-                            veicular.modelo = stringMarca;
-                            sistema.veiculos[i] = veicular;
-                            break;
-                        case 4:
-                           
-                            System.out.println("Digite a nova cor");
-                            String stringCor = sc.nextLine().toUpperCase();
-                            veicular.modelo = stringCor;
-                            sistema.veiculos[i] = veicular;
-                            break;
-                        case 5:
-                           
-                            System.out.println("Digite o novo tipo do veículo (utilitario, automovel, motocicleta): ");
-                            String tipoString = sc.nextLine().trim().toLowerCase();
-                            switch (tipoString) {
-                                case "utilitario":
-                                    veicular.tipo = Tipo.UTILITARIO;
-                                    sistema.veiculos[i] = veicular;
-                                    break;
-                                case "automovel":
-                                    veicular.tipo = Tipo.AUTOMOVEL;
-                                    sistema.veiculos[i] = veicular;
-                                    break;
-                                case "motocicleta":
-                                    veicular.tipo = Tipo.MOTOCICLETA;
-                                    sistema.veiculos[i] = veicular;
-                                    break;
-                                default:
-                                    System.out.println("Tipo inválido. Tente novamente");
-                            }
-                        break;
-                        
-                        case 0:
-                        return true;
-                        
-                        default:
-                            System.out.println("Digite uma escolha válida");
-
-
-                    }
-                }
-                
-                sc.close();
+    public boolean verificaVeiculoEstacionado(String placa) {
+        for (int i = 0; i < sistema.numVagas; i++) {
+            if (sistema.vagas[i].veiculo != null && placa.equals(sistema.vagas[i].veiculo.placa)) {
                 return true;
             }
-
-        }sc.close();
+        }
         return false;
-
     }
-
 }

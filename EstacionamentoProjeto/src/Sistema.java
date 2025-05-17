@@ -26,43 +26,6 @@ public class Sistema {
         return null;
     }
 
-    public void listarVeiculos() {
-
-        for (int i = 0; i < numVeiculos; i++) {
-            if (this.veiculos[i] != null) {
-                System.out.println("Placa: " + this.veiculos[i].placa);
-                System.out.println("Modelo: " + this.veiculos[i].modelo);
-                System.out.println("Cor: " + this.veiculos[i].cor);
-                System.out.println("Marca: " + this.veiculos[i].marca);
-                System.out.println("Tipo: " + this.veiculos[i].tipo);
-                System.out.println("------------------");
-            }
-
-        }
-    }
-
-    public void listarRegistro() {
-        for (int i = 0; i < numRegistros; i++) {
-            if (this.registros[i] != null) {
-                System.out.println("Veiculo: " + this.registros[i].veiculo.placa);
-                System.out.println("Data Entrada: " + this.registros[i].entrada.toLocalDate());
-                System.out.println("Hora Entrada: " + this.registros[i].entrada.toLocalTime());
-
-                if (this.registros[i].saida != null) {
-                    System.out.println("Data Saida: " + this.registros[i].saida.toLocalDate());
-                    System.out.println("Hora Saida: " + this.registros[i].saida.toLocalTime());
-                } else {
-                    System.out.println("Data Saida: Ainda não saiu");
-                    System.out.println("Hora Saida: Ainda não saiu");
-                }
-
-                System.out.println("-------------------------"); // Separador para melhor visualização
-            } else {
-                System.out.println("Nenhum Registro cadastrado");
-            }
-        }
-    }
-
     public boolean adicionaVeiculoRegistro(Veiculo veicular) {// ARRUMAR PRA CONSEGUIR ADICIONAR MAIS DE UMA VEZ O MESMO
                                                               // VEICULO
 
@@ -123,7 +86,7 @@ public class Sistema {
     // }
 
     // }
-    public void retornaregistro(String placa) {
+    public void retornaRegistro(String placa) {
 
         for (int i = 0; i < numRegistros; i++) {
             if (registros[i] != null) {
@@ -138,36 +101,31 @@ public class Sistema {
                         LocalTime horaSaida = registros[i].saida.toLocalTime();
 
                         Duration duracao = Duration.between(horaEntrada, horaSaida);
-                        long horasPermanencia = duracao.toHours();
-                        switch(registros[i].veiculo.tipo){
+                        long horasPermanencia = duracao.toMinutes(); // Apesar da taxa estar em horas, os minutos
+                                                                     // estacionados também contam.
+                        switch (registros[i].veiculo.tipo) { // Do contrário, seria possível burlar esse sistema
+                                                             // estacionando menos que 1h.
                             case UTILITARIO:
-
-                            registros[i].valorCobrado = 12 + horasPermanencia * tarifa.tarifaHora[0];
-                                break;                                              
+                                registros[i].valorCobrado = (horasPermanencia / 60) * tarifa.tarifaHora[0];
+                                break;
                             case AUTOMOVEL:
-                            registros[i].valorCobrado = 10 + horasPermanencia * tarifa.tarifaHora[1];
-                            break;
+                                registros[i].valorCobrado = (horasPermanencia / 60) * tarifa.tarifaHora[1];
+                                break;
                             case MOTOCICLETA:
-                            registros[i].valorCobrado = 8 + horasPermanencia * tarifa.tarifaHora[2];
-                            break;
+                                registros[i].valorCobrado = (horasPermanencia / 60) * tarifa.tarifaHora[2];
+                                break;
 
                         }
 
-                        
-                        System.out.println("Para o veículo de placa: " + registros[i].veiculo.placa
-                                + " o pagamento é de: R$ " + registros[i].valorCobrado);
+                        System.out.println("Saída efetuada. Para o veículo de placa: " + registros[i].veiculo.placa
+                                + ", o pagamento é de: R$ " + String.format("%.2f", registros[i].valorCobrado));
                         removeVaga(placa);
                     }
                 }
             }
         }
     }
-/*
- * VALORES DEFAULT:
- * UTILITÁRIO: R$12,00 fixo + R$4,00 por hora -> Posição 0 no array
- * AUTOMÓVEL: R$10,00 fixo + R$3,00 por hora -> Posição 1 no array
- * MOTOCICLETA: R$ 8,00 fixo + R$2,00 por hora -> Posição 2 no array
- */
+
     public void removeVaga(String placa) {
         for (int i = 0; i < numVagas; i++) {
             if (vagas[i].veiculo != null) {

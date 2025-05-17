@@ -39,12 +39,7 @@ public class Gestor {
 
     public void listarVagas() {
         final int NUM_CAMPOS_VAGAS = 4;
-
-        StringBuilder formatacaoBuilder = new StringBuilder();
-        for (int i = 0; i < NUM_CAMPOS_VAGAS; i++) {
-            formatacaoBuilder.append("%-").append(sistema.larguraColuna).append("s");
-        }
-        String formatacaoColunas = formatacaoBuilder.toString();
+        String formatacaoColunas = retornaStringFormatacao(NUM_CAMPOS_VAGAS);
 
         System.out.println("--------------------------------------------------------");
         System.out.println("------------------ LISTAGEM DAS VAGAS ------------------");
@@ -68,7 +63,37 @@ public class Gestor {
         }
     }
 
-    public void initVagas() { // Gera 50 vagas automaticamente, função destinada a ser utilizada com a função init() do main()
+    public void listarRegistros() {
+        final int NUM_CAMPOS_REGISTRO = 6;
+        String formatacaoColunas = retornaStringFormatacao(NUM_CAMPOS_REGISTRO);
+        System.out.println("--------------------------------------------------------");
+        System.out.println("---------------- LISTAGEM DOS REGISTROS ----------------");
+        System.out.println("--------------------------------------------------------");
+        System.out.printf(formatacaoColunas, "DATA ENTRADA", "HORA ENTRADA", "DATA SAÍDA", "HORA SAÍDA", "PLACA",
+                "MODELO");
+        System.out.println();
+        for (int i = 0; i < sistema.numRegistros; i++) {
+            if (sistema.registros[i] != null)
+                sistema.registros[i].listarRegistro(formatacaoColunas);
+        }
+    }
+
+    public void listarVeiculos() {
+        final int NUM_CAMPOS_VEICULO = 5;
+        String formatacaoColunas = retornaStringFormatacao(NUM_CAMPOS_VEICULO);
+        System.out.println("--------------------------------------------------------");
+        System.out.println("---------------- LISTAGEM DOS VEÍCULOS ----------------");
+        System.out.println("--------------------------------------------------------");
+        System.out.printf(formatacaoColunas, "PLACA", "MODELO", "COR", "MARCA", "TIPO");
+        System.out.println();
+        for (int i = 0; i < sistema.numVeiculos; i++) {
+            if (sistema.veiculos[i] != null)
+                sistema.veiculos[i].listarVeiculo(formatacaoColunas);
+        }
+    }
+
+    public void initVagas() { // Gera 50 vagas automaticamente, função destinada a ser utilizada com a função
+                              // init() do main()
         Random r = new Random();
         for (int i = 0; i < sistema.vagas.length / 2; i++) {
             int tipoRandom = r.nextInt(3);
@@ -87,15 +112,13 @@ public class Gestor {
         }
     }
 
-    void menuPrincipal() {
-        System.out.println("--------------------------------------------------------");
-        System.out.println("---- SISTEMA DE CONTROLE DO PÁTIO DE ESTACIONAMENTO ----");
-        System.out.println("--------------------------------------------------------");
-        System.out.println();
-        System.out.println("Selecione a sua opção: ");
-        System.out.println("1 - Sistema de Atendimento");
-        System.out.println("2 - Sistema de Gestão");
-        System.out.println("3 - Sair");
+    private String retornaStringFormatacao(int tamanho) {
+        StringBuilder formatacaoBuilder = new StringBuilder();
+        for (int i = 0; i < tamanho; i++) {
+            formatacaoBuilder.append("%-").append(sistema.larguraColuna).append("s");
+        }
+        String formatacao = formatacaoBuilder.toString();
+        return formatacao;
     }
 
     void menuVagas() {
@@ -116,8 +139,16 @@ public class Gestor {
         System.out.println("Selecione a sua opção: ");
         System.out.println("1 - Cadastrar vaga");
         System.out.println("2 - Excluir vaga");
-        System.out.println("3 - Listar vagas");
-        System.out.println("4 - Alterar dados das vagas");
-        System.out.println("5 - Retornar ao menu principal");
+        System.out.println("3 - Retornar ao menu principal");
+    }
+
+    void menuListagens() {
+        System.out.println("--------------------------------------------------------");
+        System.out.println("------------------- MENU DE LISTAGENS ------------------");
+        System.out.println("--------------------------------------------------------");
+        System.out.println("1 - Listar todas vagas cadastradas");
+        System.out.println("2 - Listar todos registros cadastrados");
+        System.out.println("3 - Listar todos veículos cadastros");
+        System.out.println("4 - Voltar");
     }
 }

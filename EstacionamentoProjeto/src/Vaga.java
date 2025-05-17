@@ -17,7 +17,7 @@ public class Vaga {
     }
 
     void listarVaga(String formatacaoColunas, int indice) {
-        System.out.printf(formatacaoColunas, (indice + 1), numero, tipo, estado);
+        System.out.printf(formatacaoColunas, (indice + 1), this.numero, this.tipo, this.estado);
         System.out.println();
     }
 }

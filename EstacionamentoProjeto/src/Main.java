@@ -13,7 +13,15 @@ public class Main {
         init();
 
         while (true) {
-            gestor.menuPrincipal();
+            System.out.println("--------------------------------------------------------");
+            System.out.println("---- SISTEMA DE CONTROLE DO PÁTIO DE ESTACIONAMENTO ----");
+            System.out.println("--------------------------------------------------------");
+            System.out.println();
+            System.out.println("Selecione a sua opção: ");
+            System.out.println("1 - Sistema de Atendimento");
+            System.out.println("2 - Sistema de Gestão");
+            System.out.println("3 - Alteração de dados");
+            System.out.println("4 - Sair");
             int escolha = escolhaUsuario(sc);
             switch (escolha) {
                 case 1:
@@ -23,6 +31,8 @@ public class Main {
                     sistemaGestao(sc);
                     break;
                 case 3:
+                    sistemaAlteracaoDados(sc);
+                case 4:
                     sc.close();
                     return;
                 default:
@@ -45,17 +55,15 @@ public class Main {
         funcionario = new Funcionario();
         registroEstacionamento = new RegistroEstacionamento();
 
-
         gestor.sistema = sistema;
         gestor.tarifa = tarifa;
         funcionario.sistema = sistema;
         funcionario.tarifa = tarifa;
         funcionario.registroEstacionamento = registroEstacionamento;
-        
-       
+
         gestor.initVagas(); // Cadastra 50 vagas através das funções do gestor
-        funcionario.initVeiculos();//Cadastra veículos
-       funcionario.initEstacionamento();
+        funcionario.initVeiculos(); // Cadastra veículos
+        funcionario.initEstacionamento();
 
     }
 
@@ -75,7 +83,6 @@ public class Main {
                     break;
                 case 2:
                     listagens(sc);
-                   
                     break;
                 case 3:
                     sistemaGestaoTarifa(sc);
@@ -90,30 +97,28 @@ public class Main {
             }
         }
     }
-        static void listagens(Scanner sc){
-           System.out.println("1 - Listar todas vagas cadastradas ");
-            System.out.println("2 - Listar todos registros cadastrados");
-            System.out.println("3 - Listar todos veículos cadastros");
-            System.out.println("4 - Voltar");
-            int escolha = sc.nextInt();
+
+    static void listagens(Scanner sc) {
+        while (true) {
+            gestor.menuListagens();
+            int escolha = escolhaUsuario(sc);
             switch (escolha) {
                 case 1:
                     gestor.listarVagas();
                     break;
                 case 2:
-                   sistema.listarRegistro();
+                    gestor.listarRegistros();
                     break;
                 case 3:
-                   sistema.listarVeiculos();
+                    gestor.listarVeiculos();
                     break;
                 case 4:
                     return;
-                
                 default:
                     System.out.println("Entrada inválida. Tente novamente.");
             }
-             
         }
+    }
 
     /*
      * 
@@ -133,12 +138,6 @@ public class Main {
                     sistemaGestaoExcluirVaga(sc);
                     break;
                 case 3:
-                    gestor.listarVagas();
-                    break;
-                case 4:
-                    sistemaGestaoAlterarDadosVagas(sc);
-                    break;
-                case 5:
                     return;
                 default:
                     System.out.println("Entrada inválida.");
@@ -168,13 +167,293 @@ public class Main {
         }
     }
 
-    static void sistemaGestaoAlterarDadosVagas(Scanner sc) {
+    /*
+     * 
+     * GESTÃO - ALTERAR TAMANHO DAS COLUNAS NAS LISTAGENS
+     * 
+     */
+
+    static void sistemaGestaoAlterarLarguraColunas(Scanner sc) {
+        while (true) {
+            System.out.println("Largura atual das colunas: " + sistema.larguraColuna);
+            System.out.print(
+                    "Digite o novo valor para a largura das colunas [valor mínimo: 14] (digite 0 para retornar): ");
+            int novoValor = escolhaUsuario(sc);
+            if (novoValor == 0)
+                return;
+            else if (novoValor > 14)
+                gestor.alteraTamanhoColuna(novoValor);
+            else
+                System.out.println("Valor inválido. Tente novamente.");
+        }
+    }
+
+    /*
+     * 
+     * GESTÃO - FUNÇÕES DE ALTERAÇÃO DE TARIFA
+     * 
+     */
+
+    static void sistemaGestaoTarifa(Scanner sc) {
+        while (true) {
+            tarifa.menu();
+            int escolha = escolhaUsuario(sc);
+            if (escolha == 4) {
+                return;
+            } else {
+                System.out.print("Digite o novo valor da tarifa: ");
+                double novoValor = entradaDouble(sc);
+                switch (escolha) {
+                    case 1:
+                        tarifa.alterarTarifaUtilitario(novoValor);
+                        break;
+                    case 2:
+                        tarifa.alterarTarifaAutomovel(novoValor);
+                        break;
+                    case 3:
+                        tarifa.alterarTarifaMotocicleta(novoValor);
+                        break;
+                    default:
+                        System.out.println("Entrada inválida. Tente novamente.");
+                }
+            }
+        }
+    }
+
+    /*
+     * 
+     * FUNÇÕES DO SISTEMA DE ATENDIMENTO
+     * 
+     */
+
+    static void sistemaFuncionario(Scanner sc) {
+        while (true) {
+            System.out.println("---------------------------------------------------------------");
+            System.out.println("---------- SISTEMA DE ATENDIMENTO DO ESTACIONAMENTO -----------");
+            System.out.println("---------------------------------------------------------------");
+            System.out.println("Selecione a sua opção: ");
+            System.out.println("1 - Entrada de veículos");
+            System.out.println("2 - Saída de veículos");
+            System.out.println("3 - Cadastro de veículos");
+            System.out.println("4 - Voltar");
+            int escolha = escolhaUsuario(sc);
+            switch (escolha) {
+                case 1:
+                    sistemaAdicionarVeiculoemVaga(sc);
+                    break;
+                case 2:
+                    removerVeiculoVaga(sc);
+                    break;
+                case 3:
+                    sistemaCadastroVeiculo(sc);
+                    break;
+                case 4:
+                    return;
+                default:
+                    System.out.println("Entrada inválida. Tente novamente.");
+            }
+        }
+
+    }
+
+    static void sistemaAdicionarVeiculoemVaga(Scanner sc) {
+        while (true) {
+            System.out.print("Digite a placa do veículo que deseja dar entrada: ");
+            String placaVeiculo = sc.nextLine().toUpperCase().trim();
+            if (!Veiculo.validaPlacaMercosul(placaVeiculo)) {
+                System.out.println("Placa inválida. Deve seguir o padrão Mercosul (AAA1B23)");
+                continue;
+            }
+
+            if (funcionario.retornarVeiculo(placaVeiculo) == null) {
+                System.out.println("A placa inserida não existe no sistema.");
+                System.out.println(
+                        "Digite 1 para cadastrar o veículo ou 2 para redigitar a placa. Alternativamente, digite 0 para retornar.");
+
+                int choice = escolhaUsuario(sc);
+                switch (choice) {
+                    case 1:
+                        sistemaCadastroVeiculo(sc);
+                        System.out.println("Agora, com o veículo cadastrado, você poderá dar a entrada normalmente.");
+                        return;
+                    case 2:
+                        continue;
+                    case 0:
+                        System.out.println("Operação cancelada.");
+                        return;
+                    default:
+                        System.out.println("Entrada inválida. Tente novamente.");
+                }
+            } else if (funcionario.verificaVeiculoEstacionado(placaVeiculo)) {
+                System.out.println("Veículo já se encontra estacionado.");
+                return;
+            } else {
+                funcionario.adicionarVeiculoVaga(placaVeiculo);
+                System.out.println("Entrada do veículo efetuada com sucesso!");
+                return;
+            }
+        }
+    }
+
+    static void sistemaCadastroVeiculo(Scanner sc) {
+        Veiculo veiculo = new Veiculo();
+
+        System.out.println("-------------------------------------------------------------");
+        System.out.println("------------- SISTEMA DE CADASTRO DE VEÍCULOS ---------------");
+        System.out.println("-------------------------------------------------------------");
+
+        String placaString;
+        while (true) {
+            System.out.print("Qual a placa? ");
+            placaString = sc.nextLine().trim().toUpperCase();
+            if (!Veiculo.validaPlacaMercosul(placaString)) {
+                System.out.println("Placa inválida. Deve seguir o padrão Mercosul (AAA1B23).");
+            } else if (!(funcionario.retornarVeiculo(placaString) == null)) {
+                System.out.println("Essa placa já está cadastrada no sistema.");
+                return;
+            } else {
+                System.out.println("Placa válida");
+                break; // placa válida e única
+            }
+        }
+
+        System.out.print("Qual o modelo? ");
+        String modeloString = sc.nextLine().trim().toUpperCase();
+
+        System.out.print("Qual a cor? ");
+        String corString = sc.nextLine().trim().toUpperCase();
+
+        System.out.print("Qual a marca? ");
+        String marcaString = sc.nextLine().trim().toUpperCase();
+
+        System.out.println("Digite o tipo do veículo (utilitario, automovel, motocicleta): ");
+        Tipo tipo = lerTipo(sc);
+
+        // Define os atributos
+        veiculo.placa = placaString;
+        veiculo.modelo = modeloString;
+        veiculo.cor = corString;
+        veiculo.marca = marcaString;
+        veiculo.tipo = tipo;
+
+        if (funcionario.adicionarVeiculo(veiculo)) {
+            System.out.println("Veículo cadastrado com sucesso!");
+        } else {
+            System.out.println("Erro: já existe um veículo com essas informações. Não foi possível cadastrar.");
+        }
+    }
+
+    static void removerVeiculoVaga(Scanner sc) {
+        System.out.print("Digite a placa do veículo: ");
+        sistema.retornaRegistro(sc.nextLine());
+    }
+
+    /*
+     * 
+     * SISTEMA DE ALTERAÇÃO DE DADOS
+     * 
+     */
+
+    static void sistemaAlteracaoDados(Scanner sc) {
+        while (true) {
+            System.out.println("--------------------------------------------------------");
+            System.out.println("------------- SISTEMA DE ALTERAÇÃO DE DADOS ------------");
+            System.out.println("--------------------------------------------------------");
+            System.out.println();
+            System.out.println("Selecione a sua opção: ");
+            System.out.println("1 - Alterar dados dos veículos");
+            System.out.println("2 - Alterar dados das vagas");
+            System.out.println("3 - Sair");
+            int escolha = escolhaUsuario(sc);
+            switch (escolha) {
+                case 1:
+                    editarInformacoesVeiculo(sc);
+                    break;
+                case 2:
+                    alterarDadosVagas(sc);
+                    break;
+                case 3:
+                    return;
+            }
+        }
+    }
+
+    static void editarInformacoesVeiculo(Scanner sc) {
+        System.out.println("Digite a placa do veículo que deseja alterar informações");
+        String placa = sc.nextLine().toUpperCase();
+        Veiculo veiculo = funcionario.retornarVeiculo(placa);
+        if (veiculo != null) {
+            alterarVeiculo(veiculo, sc);
+        } else {
+            System.out.println("Não existe um veículo com a placa informada. Tente novamente.");
+        }
+    }
+
+    static void alterarVeiculo(Veiculo veiculo, Scanner sc) {
+        while (true) {
+            System.out.println("----------------------------------------------------------------");
+            System.out.println("------------- SISTEMA DE ALTERAÇÃO DE VEÍCULO ------------------");
+            System.out.println("----------------------------------------------------------------");
+            System.out.println("FAÇA TODAS AS ALTERAÇÕES QUE QUISER E DEPOIS ESCOLHA A OPÇÃO DE SAIR");
+            System.out.println("PODE FAZER A ALTERAÇÃO DE DIFERENTES PARTES DO VEÍCULO DE UMA VEZ SÓ");
+
+            System.out.println("Deseja modificar:");
+            System.out.println("1 - PLACA");
+            System.out.println("2 - MODELO");
+            System.out.println("3 - MARCA");
+            System.out.println("4 - COR");
+            System.out.println("5 - TIPO");
+            System.out.println("6 - Sair");
+
+            int escolha = escolhaUsuario(sc);
+            switch (escolha) {
+                case 1:
+                    System.out.print("Digite a nova placa: ");
+                    String novaPlaca = sc.nextLine().toUpperCase().trim();
+                    if (veiculo.alteraPlaca(novaPlaca) && !(funcionario.retornarVeiculo(novaPlaca) == null)) {
+                        System.out.println("Placa atualizada com sucesso.");
+                    } else {
+                        System.out.println("Placa inválida ou já existente no sistema.");
+                    }
+                    break;
+                case 2:
+                    System.out.print("Digite o novo modelo: ");
+                    String novoModelo = sc.nextLine().toUpperCase().trim();
+                    veiculo.alteraModelo(novoModelo);
+                    System.out.println("Modelo atualizado com sucesso.");
+                    break;
+                case 3:
+                    System.out.print("Digite a nova marca: ");
+                    String novaMarca = sc.nextLine().toUpperCase().trim();
+                    veiculo.alteraMarca(novaMarca);
+                    System.out.println("Marca atualizada com sucesso.");
+                    break;
+                case 4:
+                    System.out.print("Digite a nova cor: ");
+                    String novaCor = sc.nextLine().toUpperCase().trim();
+                    veiculo.alteraCor(novaCor);
+                    System.out.println("Cor atualizada com sucesso.");
+                    break;
+                case 5:
+                    System.out.println("Digite o novo tipo de veículo: ");
+                    Tipo novoTipo = lerTipo(sc);
+                    veiculo.alteraTipo(novoTipo);
+                    System.out.println("Tipo atualizado com sucesso.");
+                    break;
+                case 6:
+                    return;
+            }
+        }
+    }
+
+    static void alterarDadosVagas(Scanner sc) {
         while (true) {
             System.out.print("Digite o número da vaga que você deseja alterar (digite 0 para retornar ao menu): ");
             int escolha = escolhaUsuario(sc);
-            if (escolha == 0) 
+            if (escolha == 0)
                 return;
-            else alterarVaga(escolha, sc);
+            else
+                alterarVaga(escolha, sc);
         }
     }
 
@@ -217,226 +496,6 @@ public class Main {
 
     /*
      * 
-     * GESTÃO - ALTERAR TAMANHO DAS COLUNAS NAS LISTAGENS
-     * 
-     */
-
-    static void sistemaGestaoAlterarLarguraColunas(Scanner sc) {
-        while (true) {
-            System.out.println("Largura atual das colunas: " + sistema.larguraColuna);
-            System.out.print("Digite o novo valor para a largura das colunas [valor mínimo: 14] (digite 0 para retornar): ");
-            int novoValor = escolhaUsuario(sc);
-            if (novoValor == 0) return;
-            else if (novoValor > 14) gestor.alteraTamanhoColuna(novoValor);
-            else System.out.println("Valor inválido. Tente novamente.");
-        }
-    }
-
-
-
-    /*
-     * 
-     * GESTÃO - FUNÇÕES DE ALTERAÇÃO DE TARIFA
-     * 
-     */
-
-    static void sistemaGestaoTarifa(Scanner sc) {
-        while (true) {
-            tarifa.menu();
-            int escolha = escolhaUsuario(sc);
-            if (escolha == 4) {
-                return;
-            } else {
-                System.out.print("Digite o novo valor da tarifa: ");
-                double novoValor = entradaDouble(sc);
-                switch (escolha) {
-                    case 1:
-                        tarifa.alterarTarifaUtilitario(novoValor);
-                        break;
-                    case 2:
-                        tarifa.alterarTarifaAutomovel(novoValor);
-                        break;
-                    case 3:
-                        tarifa.alterarTarifaMotocicleta(novoValor);
-                        break;
-                    default:
-                        System.out.println("Entrada inválida. Tente novamente.");
-                }
-            }
-        }
-    }
-
-    /*
-     * 
-     * FUNÇÕES DO SISTEMA DE ATENDIMENTO
-     * 
-     */
-
-    static void sistemaFuncionario(Scanner sc){
-       
-        while (true) {
-            
-            System.out.println("--------------------------------------------------------");
-            System.out.println("----------SISTEMA DE GESTÃO DO ESTACIONAMENTO-----------");
-            System.out.println("--------------------------------------------------------");
-            System.out.println("Selecione a sua opção: ");
-            System.out.println("1 - Cadastrar veículo");
-            System.out.println("2 - Edita veículo existente");
-            System.out.println("3 - Adicionar veículo a uma vaga livre");
-            System.out.println("4 - Listar veículos");
-            System.out.println("5 - Para remover um veículo de uma vaga");
-            System.out.println("6 - Voltar");
-            int escolha = sc.nextInt();
-            switch (escolha) {
-                case 1:
-                    sistemaCadastroVeiculo(sc);
-                    break;
-                case 2:
-                    editarInformacoesVeiculo(sc);
-                case 3:
-                   sistemaAdicionarVeiculoemVaga(sc);
-                    break;
-                case 4:
-                   sistema.listarVeiculos();
-                    break;
-                case 5:
-                    removerVeiculoVaga(sc);
-                case 6:
-                    return;
-        
-                default:
-                    System.out.println("Entrada inválida. Tente novamente.");
-            }
-        }
-
-    }
-
-    static void removerVeiculoVaga(Scanner sc){
-        sc.nextLine();
-        System.out.println("Digite a placa do veículo");
-        sistema.retornaregistro(sc.nextLine());
-    }
-
-    static void sistemaCadastroVeiculo(Scanner sc){
-        
-        Tipo tipo= null;
-        Veiculo veiculo;
-        veiculo = new Veiculo();
-
-        System.out.println("--------------------------------------------------------");
-        System.out.println("-------------SISTEMA DE ADICIONAR VEÍCULO---------------");  //depois de testar fazer uma parte para voltar
-        System.out.println("--------------------------------------------------------");
-        String placaString = "";
-        sc.nextLine();
-        
-       
-            while(veiculo.validaPlacaMercosul(placaString)==false ){
-             System.out.println("Qual a placa?");  //Já verificar se a placa vale logo no começo para evitar problema de ter que digitar tudo novamente
-             placaString = sc.nextLine().trim().toUpperCase();
-             if(veiculo.validaPlacaMercosul(placaString) == false){
-                 System.out.println("Digite uma placa válida e não repetida");
-            }else{
-                
-                 System.out.println("Placa válida ");
-                 
-             }
-         }
-        
-
-        
-        // while(veiculo.validaPlacaMercosul(placaString) ){
-        //     System.out.println("Qual a placa?");  //Já verificar se a placa vale logo no começo para evitar problema de ter que digitar tudo novamente
-        //     placaString = sc.nextLine().trim().toUpperCase();
-        //     if(veiculo.validaPlacaMercosul(placaString) == false){
-        //         System.out.println("Digite uma placa válida e não repetida");
-        //     }else{
-                
-        //         System.out.println("Placa válida ");
-        //     }
-        // }
-        
-
-        System.out.println("Qual o modelo?");
-        String modeloString = sc.nextLine().toUpperCase();
-        System.out.println("Qual a cor?");
-        String corString = sc.nextLine().toUpperCase();
-        System.out.println("Qual a marca?");
-        String marcaString = sc.nextLine().toUpperCase();
-        System.out.println("Digite o tipo do veículo (utilitario, automovel, motocicleta): ");
-        String tipoString = sc.nextLine().trim().toLowerCase();
-         switch (tipoString) {
-                case "utilitario":
-                    tipo = Tipo.UTILITARIO;
-                    break;
-                case "automovel":
-                    tipo = Tipo.AUTOMOVEL;
-                    break;
-                case "motocicleta":
-                    tipo = Tipo.MOTOCICLETA;
-                    break;
-                default:
-                    System.out.println("Tipo inválido. Tente novamente");
-            }
-                veiculo.placa = placaString;
-                veiculo.modelo = modeloString;
-                veiculo.cor = corString;
-                veiculo.marca = marcaString;
-                veiculo.tipo = tipo;
-
-        if (funcionario.adicionarVeiculo(veiculo)) {
-                System.out.println("Veículo cadastrada com sucesso!");
-                
-            } else {
-                System.out.println("Já existe um Veículo existente com essas informações, não foi possível adicionar");
-            }
-            return;
-        
-    }
-   
-    static void editarInformacoesVeiculo(Scanner sc){
-        sc.nextLine();
-    System.out.println("Digite a placa do veículo que deseja alterar informações");
-    String placa = sc.nextLine();
-    if(funcionario.alterarVeiculo(placa)){
-        System.out.println("Veiculo editado com sucesso");
-        sistemaFuncionario(sc);
-    }
-   }
-
-
-
-
-    static void sistemaAdicionarVeiculoemVaga(Scanner sc){
-        sc.nextLine();
-        System.out.println("Digite a placa do veículo que deseja adicionar em uma vaga");
-        String placaVeiculo = sc.nextLine().toUpperCase();
-        if(funcionario.verificaExistenciaVeiculo(placaVeiculo)){
-            funcionario.adicionarVeiculoVaga(placaVeiculo);
-        }else{
-            System.out.println("Esse veículo não foi adicionado previamente, ou a placa foi digitada errada");
-            System.out.println("Digite  1 para redigitar a placa ou 2 para adicionar veículo ");
-            int choice = sc.nextInt();
-            switch (choice) {
-                case 1:
-                    sistemaAdicionarVeiculoemVaga(sc);
-                    break;
-                case 2:
-                    sistemaCadastroVeiculo(sc);
-                    break;
-                default:
-                System.out.println("Digite um código válido por favor");
-                    break;
-            } 
-        }
-        return;
-    }
-
-    
-
-    
-
-    /*
-     * 
      * FUNÇÕES AUXILIARES
      * 
      */
@@ -471,7 +530,6 @@ public class Main {
 
     static Tipo lerTipo(Scanner sc) {
         while (true) {
-            System.out.println("Digite o tipo da vaga: ");
             Tipo.listarOpcoes();
             String entrada = sc.nextLine();
             Tipo tipo = Tipo.stringParaTipo(entrada);

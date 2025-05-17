@@ -23,21 +23,24 @@ public class Tarifa {
     }
 
     void alterarTarifaUtilitario(double tarifa) {
-        if (tarifa > 0) tarifaHora[0] = tarifa;
+        if (tarifa > 0)
+            tarifaHora[0] = tarifa;
     }
 
     void alterarTarifaAutomovel(double tarifa) {
-        if (tarifa > 0) tarifaHora[1] = tarifa;
+        if (tarifa > 0)
+            tarifaHora[1] = tarifa;
     }
 
     void alterarTarifaMotocicleta(double tarifa) {
-        if (tarifa > 0) tarifaHora[2] = tarifa;
+        if (tarifa > 0)
+            tarifaHora[2] = tarifa;
     }
 }
 
 /*
  * VALORES DEFAULT:
- * UTILITÁRIO: R$12,00 fixo + R$4,00 por hora -> Posição 0 no array
- * AUTOMÓVEL: R$10,00 fixo + R$3,00 por hora -> Posição 1 no array
- * MOTOCICLETA: R$ 8,00 fixo + R$2,00 por hora -> Posição 2 no array
+ * UTILITÁRIO: R$4,00 por hora -> Posição 0 no array
+ * AUTOMÓVEL: R$3,00 por hora -> Posição 1 no array
+ * MOTOCICLETA: R$2,00 por hora -> Posição 2 no array
  */
