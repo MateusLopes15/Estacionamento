@@ -369,7 +369,7 @@ public class Main {
         System.out.print("Qual a marca? ");
         String marcaString = sc.nextLine().trim().toUpperCase();
 
-        System.out.println("Digite o tipo do veículo (utilitario, automovel, motocicleta): ");
+        System.out.println("Escolha o tipo do veículo: ");
         Tipo tipo = lerTipo(sc);
 
         // Define os atributos
