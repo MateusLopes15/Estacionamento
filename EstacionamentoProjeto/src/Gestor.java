@@ -1,4 +1,5 @@
 import java.util.Random;
+import java.time.LocalDateTime;
 
 public class Gestor {
     Sistema sistema;
@@ -63,20 +64,49 @@ public class Gestor {
         }
     }
 
-    public void listarRegistros() {
+        public void listarRegistros(LocalDateTime inicio, LocalDateTime fim) {
         final int NUM_CAMPOS_REGISTRO = 6;
         String formatacaoColunas = retornaStringFormatacao(NUM_CAMPOS_REGISTRO);
+
         System.out.println("--------------------------------------------------------");
         System.out.println("---------------- LISTAGEM DOS REGISTROS ----------------");
         System.out.println("--------------------------------------------------------");
-        System.out.printf(formatacaoColunas, "DATA ENTRADA", "HORA ENTRADA", "DATA SAÍDA", "HORA SAÍDA", "PLACA",
-                "MODELO");
+        System.out.printf(formatacaoColunas, "DATA ENTRADA", "HORA ENTRADA", "DATA SAÍDA", "HORA SAÍDA", "PLACA", "MODELO");
         System.out.println();
+
         for (int i = 0; i < sistema.numRegistros; i++) {
-            if (sistema.registros[i] != null)
-                sistema.registros[i].listarRegistro(formatacaoColunas);
+            RegistroEstacionamento registro = sistema.registros[i];
+
+            if (registro != null) {
+                LocalDateTime entrada = registro.entrada;
+                LocalDateTime saida = registro.saida;
+                boolean deveListar = false;
+
+                if (inicio == null && fim == null) {
+                    // Sem filtro, lista todos os registros
+                    deveListar = true;
+                } 
+                else if (inicio != null && fim != null) {
+                    // Lista se entrada >= inicio && saida <= fim
+                    if (entrada != null && saida != null &&
+                        !entrada.isBefore(inicio) && !saida.isAfter(fim)) {
+                        deveListar = true;
+                    }
+                } 
+                else if (inicio != null && fim == null) {
+                    // Lista registros sem saída (ainda no estacionamento) com entrada >= inicio
+                    if (entrada != null && saida == null && !entrada.isBefore(inicio)) {
+                        deveListar = true;
+                    }
+                }
+
+                if (deveListar) {
+                    registro.listarRegistro(formatacaoColunas);
+                }
+            }
         }
     }
+
 
     public void listarVeiculos() {
         final int NUM_CAMPOS_VEICULO = 5;
@@ -148,7 +178,9 @@ public class Gestor {
         System.out.println("--------------------------------------------------------");
         System.out.println("1 - Listar todas vagas cadastradas");
         System.out.println("2 - Listar todos registros cadastrados");
-        System.out.println("3 - Listar todos veículos cadastros");
-        System.out.println("4 - Voltar");
+        System.out.println("3 - Listar os registros em um intervalo de tempo");
+        System.out.println("4 - Listar todos os veículos estacionados atualmente");
+        System.out.println("5 - Listar todos veículos cadastrados");
+        System.out.println("6 - Voltar");
     }
 }

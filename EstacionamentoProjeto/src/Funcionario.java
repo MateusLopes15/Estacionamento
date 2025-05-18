@@ -10,10 +10,7 @@ public class Funcionario {
     RegistroEstacionamento registroEstacionamento;
 
     public void initEstacionamento() {
-        // Veiculo veiculo;
-        // LocalDateTime entrada;
-        // LocalDateTime saida;
-        // double valorCobrado;
+        Random r = new Random();
         for (int i = 0; i < 10; i++) {
             LocalDateTime entradaAleatoria = gerarLocalDateTimeAleatorio();
             LocalDateTime saidaAleatoria;
@@ -32,10 +29,8 @@ public class Funcionario {
 
             sistema.registros[i] = new RegistroEstacionamento();
             if (sistema.registros[i].veiculo == null) {
-
-                // sistema.registros[i].veiculo = veicular;
                 sistema.registros[i].entrada = entradaAleatoria;
-                sistema.registros[i].saida = saidaAleatoria;
+                if (r.nextInt(2) == 1) sistema.registros[i].saida = saidaAleatoria;
                 sistema.registros[i].veiculo = veicular;
                 if (veicular.tipo != null) {
                     switch (veicular.tipo) {
@@ -54,17 +49,17 @@ public class Funcionario {
 
             }
         }
-
     }
 
     public static LocalDateTime gerarLocalDateTimeAleatorio() {
         Random random = new Random();
 
-        int ano = 2020 + random.nextInt(6);
-        int mes = 1 + random.nextInt(12);
-        int dia = 1 + random.nextInt(LocalDate.of(ano, mes, 1).lengthOfMonth());
+        int ano = LocalDateTime.now().getYear();
+        int mes = LocalDate.now().getMonthValue();
+        int dia = LocalDateTime.now().getDayOfMonth();
 
-        int hora = random.nextInt(24);
+        int horaAgora = LocalDateTime.now().getHour();
+        int hora = random.nextInt(horaAgora);
         int minuto = random.nextInt(60);
         int segundo = random.nextInt(60);
 

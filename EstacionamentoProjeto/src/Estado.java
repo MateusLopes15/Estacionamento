@@ -3,7 +3,8 @@ public enum Estado {
     OCUPADO;
 
     public static Estado stringParaEstado(String entrada) {
-        if (entrada == null) return null;
+        if (entrada == null)
+            return null;
         switch (entrada.trim().toLowerCase()) {
             case "livre", "1":
                 return LIVRE;

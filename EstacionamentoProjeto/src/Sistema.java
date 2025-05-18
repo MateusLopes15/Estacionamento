@@ -74,66 +74,50 @@ public class Sistema {
             }
         }
         return false;
-
     }
 
-    // public void removerVeiculoVagaadicionaRegistro(Veiculo veicular){
-    // RegistroEstacionamento registrar = new RegistroEstacionamento();
-    // registrar = retornaregistro(veicular.placa);
-
-    // if(registrar!=null){
-
-    // }
-
-    // }
-    public void retornaRegistro(String placa) {
-
+    public boolean retornaRegistro(String placa) {
         for (int i = 0; i < numRegistros; i++) {
             if (registros[i] != null) {
                 if (registros[i].veiculo.placa != null) {
-
-                    if (registros[i].veiculo.placa.equals(placa)) {
-
+                    if (registros[i].veiculo.placa.equals(placa) && registros[i].saida == null) {
                         registros[i].saida = LocalDateTime.now();
-
                         LocalTime horaEntrada = registros[i].entrada.toLocalTime();
-
                         LocalTime horaSaida = registros[i].saida.toLocalTime();
-
                         Duration duracao = Duration.between(horaEntrada, horaSaida);
-                        long horasPermanencia = duracao.toMinutes(); // Apesar da taxa estar em horas, os minutos
+                        long tempoPermanencia = duracao.toMinutes(); // Apesar da taxa estar em horas, os minutos
                                                                      // estacionados também contam.
                         switch (registros[i].veiculo.tipo) { // Do contrário, seria possível burlar esse sistema
                                                              // estacionando menos que 1h.
                             case UTILITARIO:
-                                registros[i].valorCobrado = (horasPermanencia / 60) * tarifa.tarifaHora[0];
+                                registros[i].valorCobrado = (tempoPermanencia / 60.0) * tarifa.tarifaHora[0];
                                 break;
                             case AUTOMOVEL:
-                                registros[i].valorCobrado = (horasPermanencia / 60) * tarifa.tarifaHora[1];
+                                registros[i].valorCobrado = (tempoPermanencia / 60.0) * tarifa.tarifaHora[1];
                                 break;
                             case MOTOCICLETA:
-                                registros[i].valorCobrado = (horasPermanencia / 60) * tarifa.tarifaHora[2];
+                                registros[i].valorCobrado = (tempoPermanencia / 60.0) * tarifa.tarifaHora[2];
                                 break;
-
                         }
 
                         System.out.println("Saída efetuada. Para o veículo de placa: " + registros[i].veiculo.placa
                                 + ", o pagamento é de: R$ " + String.format("%.2f", registros[i].valorCobrado));
-                        removeVaga(placa);
+                        return true;
                     }
                 }
             }
         }
+        return false;
     }
 
     public void removeVaga(String placa) {
         for (int i = 0; i < numVagas; i++) {
             if (vagas[i].veiculo != null) {
                 if (vagas[i].veiculo.placa.equals(placa)) {
+                    vagas[i].veiculo = null;
                     vagas[i].estado = Estado.LIVRE;
                 }
             }
-
         }
     }
 

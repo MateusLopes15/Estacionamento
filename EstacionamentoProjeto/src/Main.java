@@ -1,5 +1,8 @@
+import java.time.LocalDateTime;
 import java.util.InputMismatchException;
 import java.util.Scanner;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 
 public class Main {
     static Sistema sistema;
@@ -32,6 +35,7 @@ public class Main {
                     break;
                 case 3:
                     sistemaAlteracaoDados(sc);
+                    break;
                 case 4:
                     sc.close();
                     return;
@@ -64,7 +68,6 @@ public class Main {
         gestor.initVagas(); // Cadastra 50 vagas através das funções do gestor
         funcionario.initVeiculos(); // Cadastra veículos
         funcionario.initEstacionamento();
-
     }
 
     /*
@@ -107,12 +110,52 @@ public class Main {
                     gestor.listarVagas();
                     break;
                 case 2:
-                    gestor.listarRegistros();
+                    gestor.listarRegistros(null, null); // Listagem de todos os registros, sem filtragem
                     break;
                 case 3:
-                    gestor.listarVeiculos();
+                    System.out.print("Digite o dia de início do intervalo: (YYYY/MM/DD): ");
+                    String inicioIntervaloDia = leituraData(sc);
+                    System.out.print("Digite o dia de fim do intervalo: (YYYY/MM/DD): ");
+                    String fimIntervaloDia = leituraData(sc);
+
+                    System.out.print("Digite o a hora de início do intervalo: (HH:MM:SS): ");
+                    String inicioIntervaloHora = leituraHora(sc);
+                    System.out.print("Digite a hora de fim do intervalo: (HH:MM:SS): ");
+                    String fimIntervaloHora = leituraHora(sc);
+                    
+                    String[] dataInicioSplit = inicioIntervaloDia.split("/");
+                    String[] horaInicioSplit = inicioIntervaloHora.split(":");
+
+                    String[] dataFimSplit = fimIntervaloDia.split("/");
+                    String[] horaFimSplit = fimIntervaloHora.split(":");
+
+                    LocalDateTime inicio = LocalDateTime.of(
+                    Integer.parseInt(dataInicioSplit[0]), // Ano
+                    Integer.parseInt(dataInicioSplit[1]), // Mês
+                    Integer.parseInt(dataInicioSplit[2]), // Dia
+                    Integer.parseInt(horaInicioSplit[0]), // Hora
+                    Integer.parseInt(horaInicioSplit[1]), // Minuto
+                    Integer.parseInt(horaInicioSplit[2])  // Segundo
+                );
+
+                LocalDateTime fim = LocalDateTime.of(
+                    Integer.parseInt(dataFimSplit[0]),
+                    Integer.parseInt(dataFimSplit[1]),
+                    Integer.parseInt(dataFimSplit[2]),
+                    Integer.parseInt(horaFimSplit[0]),
+                    Integer.parseInt(horaFimSplit[1]),
+                    Integer.parseInt(horaFimSplit[2])
+                );
+
+                    gestor.listarRegistros(inicio, fim);
                     break;
                 case 4:
+                    gestor.listarRegistros(LocalDateTime.MIN, null);
+                    break;
+                case 5:
+                    gestor.listarVeiculos();
+                    break;
+                case 6:
                     return;
                 default:
                     System.out.println("Entrada inválida. Tente novamente.");
@@ -345,7 +388,9 @@ public class Main {
 
     static void removerVeiculoVaga(Scanner sc) {
         System.out.print("Digite a placa do veículo: ");
-        sistema.retornaRegistro(sc.nextLine());
+        String placa = sc.nextLine().toUpperCase().trim();
+        if (sistema.retornaRegistro(placa))
+            sistema.removeVaga(placa);
     }
 
     /*
@@ -551,6 +596,32 @@ public class Main {
                 return estado;
             } else {
                 System.out.println("Tipo inválido. Tente novamente.");
+            }
+        }
+    }
+
+    static String leituraData(Scanner sc) {
+        Pattern pattern = Pattern.compile("^\\d{4}/(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])$"); // Regex para 'YYYY/MM/DD'
+        while (true) {
+            String data = sc.nextLine().trim();
+            Matcher matcher = pattern.matcher(data);
+            if (!matcher.matches()) {
+                System.out.println("Sua entrada não se encontra no formato YYYY/MM/DD. Tente novamente.");
+            } else {
+                return data;
+            }
+        }
+    }
+
+    static String leituraHora(Scanner sc) {
+        Pattern pattern = Pattern.compile("^([01]\\d|2[0-3]):[0-5]\\d:[0-5]\\d$"); // Regex para 'HH:MM:SS'
+        while (true) {
+            String hora = sc.nextLine().trim();
+            Matcher matcher = pattern.matcher(hora);
+            if (!matcher.matches()) {
+                System.out.println("Sua entrada não se encontra no formato HH:MM. Tente novamente.");
+            } else {
+                return hora;
             }
         }
     }

@@ -3,9 +3,9 @@ public enum Tipo {
     AUTOMOVEL,
     MOTOCICLETA;
 
-
     public static Tipo stringParaTipo(String entrada) {
-        if (entrada == null) return null;
+        if (entrada == null)
+            return null;
         switch (entrada.trim().toLowerCase()) {
             case "utilitario", "1":
                 return UTILITARIO;
